@@ -1,0 +1,26 @@
+name: bloc_wrapped_values
+version: 1.0.0
+description: | 
+  A package that provides a clean and type-safe way to handle (async) states in BLoC/Cubit patterns. 
+
+homepage: https://github.com/qk7b/bloc_wrapped_values
+repository: https://github.com/qk7b/bloc_wrapped_values
+issue_tracker: https://github.com/qk7b/bloc_wrapped_values/issues
+documentation: https://github.com/qk7b/bloc_wrapped_values/README.md
+
+topics:
+  - bloc
+  - cubit
+  - state-management
+  - async
+
+environment:
+  sdk: ^3.5.3
+
+dependencies:
+  bloc: ^9.0.0
+
+dev_dependencies:
+  bloc_test: ^10.0.0
+  lints: ^4.0.0
+  test: ^1.24.0
