@@ -9,3 +9,5 @@
 ### Added 
 
 - `ErrorValueCubit` and `ErrorValueWrapper`
+
+## 1.2.0
