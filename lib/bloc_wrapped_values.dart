@@ -5,3 +5,4 @@
 library;
 
 export 'src/async_value/async_value.dart';
+export 'src/error_value/error_value.dart';
