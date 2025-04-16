@@ -4,5 +4,5 @@
 /// More dartdocs go here.
 library;
 
-export 'src/blocs/async_value_cubit.dart';
-export 'src/wrappers/async_value_wrapper.dart';
+export 'src/async_value/async_value.dart';
+export 'src/error_value/error_value.dart';

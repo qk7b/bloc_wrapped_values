@@ -19,7 +19,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  bloc_wrapped_values: ^1.0.0
+  bloc_wrapped_values: ^1.1.0
 ```
 
 ## Basic Example
@@ -79,6 +79,11 @@ state.maybeWhen(
   orElse: () => DefaultWidget(),
 );
 ```
+
+## Available helpers
+
+- `AsyncValueCubit` with `AsyncValueWrapper` (`initial`, `loading`, `success`, `error`)
+- `ErrorValueCubit` with `ErrorValueWrapper` (`value`, `error`)
 
 ## Contributing
 

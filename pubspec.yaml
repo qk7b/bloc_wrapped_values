@@ -1,5 +1,5 @@
 name: bloc_wrapped_values
-version: 1.0.0
+version: 1.1.0
 description: | 
   A package that provides a clean and type-safe way to handle (async) states in BLoC/Cubit patterns. 
 
