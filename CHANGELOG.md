@@ -1,8 +1,4 @@
-## 1.0.0
-
-### Initial version. 
-
-- `AsyncValueCubit` and `AsyncValueWrapper`
+## 1.2.0
 
 ## 1.1.0
 
@@ -10,4 +6,8 @@
 
 - `ErrorValueCubit` and `ErrorValueWrapper`
 
-## 1.2.0
+## 1.0.0
+
+### Initial version. 
+
+- `AsyncValueCubit` and `AsyncValueWrapper`
