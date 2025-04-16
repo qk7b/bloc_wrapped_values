@@ -6,7 +6,7 @@ description: |
 homepage: https://github.com/qk7b/bloc_wrapped_values
 repository: https://github.com/qk7b/bloc_wrapped_values
 issue_tracker: https://github.com/qk7b/bloc_wrapped_values/issues
-documentation: https://github.com/qk7b/bloc_wrapped_values/README.md
+documentation: https://github.com/qk7b/bloc_wrapped_values/blob/main/README.md
 
 topics:
   - bloc
