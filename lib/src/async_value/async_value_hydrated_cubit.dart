@@ -3,9 +3,10 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 /// Base class for Cubit that emits a [AsyncValueWrapper]
 /// This is made to make emit of the value easier in subclasses
-abstract class AsyncValueCubit<T> extends HydratedCubit<AsyncValueWrapper<T>> {
+abstract class AsyncValueHydratedCubit<T>
+    extends HydratedCubit<AsyncValueWrapper<T>> {
   /// Constructor
-  AsyncValueCubit() : super(AsyncValueWrapper<T>.initial());
+  AsyncValueHydratedCubit() : super(AsyncValueWrapper<T>.initial());
 
   /// Emits a [AsyncValueWrapper.loading] value
   /// if there was a value before, it will be passed as oldValue
