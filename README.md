@@ -157,18 +157,18 @@ abstract class MyState with _$MyState {
 
 If you want your cubit state to persist and restore automatically across app restarts, extend `HydratedAsyncValueCubit` instead of `AsyncValueCubit`.
 
-To configure it, simply implement the `tFromJson` and `tToJson` abstract members to specify how your generic value `T` should be serialized/deserialized:
+To configure it, simply implement the `valueFromJson` and `valueToJson` abstract members to specify how your generic value `T` should be serialized/deserialized:
 
 ```dart
 class UserCubit extends HydratedAsyncValueCubit<User> {
   UserCubit() : super();
 
   @override
-  User Function(dynamic json) get tFromJson => 
+  User Function(dynamic json) get valueFromJson => 
       (json) => User.fromJson(json as Map<String, dynamic>);
 
   @override
-  dynamic Function(User user) get tToJson => 
+  dynamic Function(User user) get valueToJson => 
       (user) => user.toJson();
 
   Future<void> fetchUser(String id) async {
