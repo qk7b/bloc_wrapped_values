@@ -40,7 +40,7 @@ enum AsyncValueStatus {
 /// It contains a value that is of type [T] and a status that is of type [AsyncValueStatus].
 /// It is used to handle the state of a value within a [Cubit] or [Bloc].
 class AsyncValueWrapper<T> {
-  const AsyncValueWrapper._({
+  const AsyncValueWrapper({
     this.value,
     this.status = AsyncValueStatus.initial,
     this.err,
@@ -59,7 +59,7 @@ class AsyncValueWrapper<T> {
   /// it will need a [tConverter] to be able to parse the [value] itself
   factory AsyncValueWrapper.fromJson(
       Map<String, dynamic> json, T Function(dynamic) tConverter) {
-    return AsyncValueWrapper._(
+    return AsyncValueWrapper(
       value: tConverter(json['value']),
       status: AsyncValueStatus.fromJson(json['status'] as String),
       err: json['err'],
@@ -70,8 +70,7 @@ class AsyncValueWrapper<T> {
   /// [status] defaults to [AsyncValueStatus.initial].
   /// [err] defaults to null.
   /// if [initialValue] is provided, it will be used
-  factory AsyncValueWrapper.initial({T? initialValue}) =>
-      AsyncValueWrapper<T>._(
+  factory AsyncValueWrapper.initial({T? initialValue}) => AsyncValueWrapper<T>(
         status: AsyncValueStatus.initial,
         value: initialValue,
       );
@@ -80,7 +79,7 @@ class AsyncValueWrapper<T> {
   /// [status] defaults to [AsyncValueStatus.loading].
   /// [error] defaults to null.
   /// if [oldValue] is provided, it will be used
-  factory AsyncValueWrapper.loading({T? oldValue}) => AsyncValueWrapper<T>._(
+  factory AsyncValueWrapper.loading({T? oldValue}) => AsyncValueWrapper<T>(
         status: AsyncValueStatus.loading,
         value: oldValue,
       );
@@ -88,7 +87,7 @@ class AsyncValueWrapper<T> {
   /// Creates a new [AsyncValueWrapper] with the given [value].
   /// [status] defaults to [AsyncValueStatus.success].
   /// [err] defaults to null.
-  factory AsyncValueWrapper.success(T value) => AsyncValueWrapper<T>._(
+  factory AsyncValueWrapper.success(T value) => AsyncValueWrapper<T>(
         value: value,
         status: AsyncValueStatus.success,
       );
@@ -98,7 +97,7 @@ class AsyncValueWrapper<T> {
   /// [err] defaults to null.
   /// if [oldValue] is provided, it will be used
   factory AsyncValueWrapper.error({Object? err, T? oldValue}) =>
-      AsyncValueWrapper<T>._(
+      AsyncValueWrapper<T>(
         status: AsyncValueStatus.error,
         value: oldValue,
         err: err,

@@ -19,7 +19,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  bloc_wrapped_values: ^2.0.0
+  bloc_wrapped_values: ^2.0.2
 ```
 
 ## Basic Example

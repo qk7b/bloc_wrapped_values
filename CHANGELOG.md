@@ -1,3 +1,7 @@
+## 2.0.2
+
+- Added `AsyncValueWrapper` public `const` constructor
+
 ## 2.0.1
 
 - chore: update documentation issue
