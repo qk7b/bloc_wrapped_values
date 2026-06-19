@@ -89,5 +89,139 @@ void main() {
         expect(wrapper.value, oldValue);
       });
     });
+
+    group('Json serialization', () {
+      group('AsyncValueStatus', () {
+        test('toJson returns correct identifier string', () {
+          expect(AsyncValueStatus.initial.toJson(), 'initial');
+          expect(AsyncValueStatus.loading.toJson(), 'loading');
+          expect(AsyncValueStatus.success.toJson(), 'success');
+          expect(AsyncValueStatus.error.toJson(), 'error');
+        });
+
+        test('fromJson parses string case-insensitively', () {
+          expect(AsyncValueStatus.fromJson('initial'), AsyncValueStatus.initial);
+          expect(AsyncValueStatus.fromJson('INITIAL'), AsyncValueStatus.initial);
+          expect(AsyncValueStatus.fromJson('loading'), AsyncValueStatus.loading);
+          expect(AsyncValueStatus.fromJson('LoAdInG'), AsyncValueStatus.loading);
+          expect(AsyncValueStatus.fromJson('success'), AsyncValueStatus.success);
+          expect(AsyncValueStatus.fromJson('SUCCESS'), AsyncValueStatus.success);
+          expect(AsyncValueStatus.fromJson('error'), AsyncValueStatus.error);
+          expect(AsyncValueStatus.fromJson('ERROR'), AsyncValueStatus.error);
+        });
+
+        test('fromJson falls back to initial for unknown status', () {
+          expect(AsyncValueStatus.fromJson('unknown'), AsyncValueStatus.initial);
+          expect(AsyncValueStatus.fromJson(''), AsyncValueStatus.initial);
+        });
+      });
+
+      group('AsyncValueWrapper', () {
+        test('toJson encodes initial state correctly', () {
+          final wrapper = AsyncValueWrapper<int?>.initial();
+          final json = wrapper.toJson((val) => val);
+          expect(json, {
+            'status': 'initial',
+            'value': null,
+            'err': null,
+          });
+        });
+
+        test('toJson encodes initial state with value correctly', () {
+          final wrapper = AsyncValueWrapper<int>.initial(initialValue: 42);
+          final json = wrapper.toJson((val) => val);
+          expect(json, {
+            'status': 'initial',
+            'value': 42,
+            'err': null,
+          });
+        });
+
+        test('toJson encodes loading state correctly', () {
+          final wrapper = AsyncValueWrapper<int>.loading(oldValue: 100);
+          final json = wrapper.toJson((val) => val);
+          expect(json, {
+            'status': 'loading',
+            'value': 100,
+            'err': null,
+          });
+        });
+
+        test('toJson encodes success state correctly', () {
+          final wrapper = AsyncValueWrapper<String>.success('hello');
+          final json = wrapper.toJson((val) => val.toUpperCase());
+          expect(json, {
+            'status': 'success',
+            'value': 'HELLO',
+            'err': null,
+          });
+        });
+
+        test('toJson encodes error state correctly', () {
+          final wrapper = AsyncValueWrapper<int>.error(err: 'Something went wrong', oldValue: 5);
+          final json = wrapper.toJson((val) => val);
+          expect(json, {
+            'status': 'error',
+            'value': 5,
+            'err': 'Something went wrong',
+          });
+        });
+
+        test('fromJson decodes initial state correctly', () {
+          final json = {
+            'status': 'initial',
+            'value': null,
+            'err': null,
+          };
+          final wrapper = AsyncValueWrapper<int?>.fromJson(
+            json,
+            (val) => val as int?,
+          );
+          expect(wrapper.status, AsyncValueStatus.initial);
+          expect(wrapper.value, isNull);
+          expect(wrapper.err, isNull);
+        });
+
+        test('fromJson decodes success state correctly', () {
+          final json = {
+            'status': 'success',
+            'value': 42,
+            'err': null,
+          };
+          final wrapper = AsyncValueWrapper<int>.fromJson(
+            json,
+            (val) => (val as num).toInt(),
+          );
+          expect(wrapper.status, AsyncValueStatus.success);
+          expect(wrapper.value, 42);
+          expect(wrapper.err, isNull);
+        });
+
+        test('fromJson decodes error state correctly', () {
+          final json = {
+            'status': 'error',
+            'value': 10,
+            'err': 'an error occurred',
+          };
+          final wrapper = AsyncValueWrapper<int>.fromJson(
+            json,
+            (val) => (val as num).toInt(),
+          );
+          expect(wrapper.status, AsyncValueStatus.error);
+          expect(wrapper.value, 10);
+          expect(wrapper.err, 'an error occurred');
+        });
+
+        test('round trip serialization/deserialization', () {
+          final original = AsyncValueWrapper<int>.success(99);
+          final json = original.toJson((val) => val);
+          final deserialized = AsyncValueWrapper<int>.fromJson(
+            json,
+            (val) => (val as num).toInt(),
+          );
+          expect(deserialized, original);
+        });
+      });
+    });
   });
 }

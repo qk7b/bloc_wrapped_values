@@ -3,19 +3,37 @@
 /// Those values are used to determine in which state the [AsyncValueWrapper] is.
 enum AsyncValueStatus {
   /// The [AsyncValueWrapper] is in the initial state.
-  initial,
+  initial._('initial'),
 
   /// The [AsyncValueWrapper] is in the loading state.
-  loading,
+  loading._('loading'),
 
   /// The [AsyncValueWrapper] is in the success state.
-  success,
+  success._('success'),
 
   /// The [AsyncValueWrapper] is in the error state.
-  error;
+  error._('error');
 
   @override
-  toString() => 'AsyncValueStatus.$name';
+  String toString() => 'AsyncValueStatus.$_identifier';
+
+  final String _identifier;
+
+  const AsyncValueStatus._(this._identifier);
+
+  /// Creates a new [AsyncValueStatus] with the given Json representation [value].
+  factory AsyncValueStatus.fromJson(String value) {
+    return AsyncValueStatus.values.firstWhere(
+      (t) {
+        return t._identifier.toLowerCase() == value.toLowerCase();
+      },
+      orElse: () => AsyncValueStatus.initial,
+    );
+  }
+
+  /// Returns the json reprensentation of [AsyncValueStatus]
+  /// (basically a string)
+  String toJson() => _identifier;
 }
 
 /// A [AsyncValueWrapper] represents a value that is either loading, success, or error.
@@ -36,6 +54,17 @@ class AsyncValueWrapper<T> {
 
   /// In case the [AsyncValueWrapper] is in the [AsyncValueStatus.error] state, this field contains the error message.
   final Object? err;
+
+  /// Creates a new [AsyncValueWrapper] with the given Json representation [json].
+  /// it will need a [tConverter] to be able to parse the [value] itself
+  factory AsyncValueWrapper.fromJson(
+      Map<String, dynamic> json, T Function(dynamic) tConverter) {
+    return AsyncValueWrapper._(
+      value: tConverter(json['value']),
+      status: AsyncValueStatus.fromJson(json['status'] as String),
+      err: json['err'],
+    );
+  }
 
   /// Creates a new [AsyncValueWrapper] with the given [value].
   /// [status] defaults to [AsyncValueStatus.initial].
@@ -96,6 +125,15 @@ class AsyncValueWrapper<T> {
   @override
   String toString() {
     return 'AsyncValueWrapper{value: $value, status: $status, err: $err}';
+  }
+
+  /// Converts an [AsyncValueWrapper] to a json representation
+  Map<String, dynamic> toJson(dynamic Function(T) ttoJson) {
+    return {
+      'status': status.toJson(),
+      'value': value != null ? ttoJson(value as T) : null,
+      'err': err,
+    };
   }
 }
 

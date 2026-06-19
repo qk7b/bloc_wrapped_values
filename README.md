@@ -19,7 +19,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  bloc_wrapped_values: ^1.1.0
+  bloc_wrapped_values: ^2.0.0
 ```
 
 ## Basic Example
@@ -80,9 +80,109 @@ state.maybeWhen(
 );
 ```
 
+## JSON Serialization
+
+`AsyncValueWrapper` and `AsyncValueStatus` support JSON serialization and deserialization out of the box, making it easy to persist state (e.g., using `HydratedBloc` or caching layers).
+
+### Manual Serialization
+
+You can manually serialize and deserialize state wrappers by providing a converter function for your generic data type `T`:
+
+```dart
+// 1. Serialization (toJson)
+final wrapper = AsyncValueWrapper<User>.success(User(name: 'Alice'));
+final Map<String, dynamic> json = wrapper.toJson((user) => user.toJson());
+
+// 2. Deserialization (fromJson)
+final decodedWrapper = AsyncValueWrapper<User>.fromJson(
+  json,
+  (userJson) => User.fromJson(userJson as Map<String, dynamic>),
+);
+```
+
+### Integration with `json_serializable` & `freezed`
+
+If you are using code generation packages like `json_serializable` or `freezed`, you can define a custom `JsonConverter` to seamlessly handle serialization for generic wrapper properties:
+
+```dart
+import 'package:bloc_wrapped_values/bloc_wrapped_values.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+class UserAsyncValueConverter implements JsonConverter<AsyncValueWrapper<User>, Map<String, dynamic>> {
+  const UserAsyncValueConverter();
+
+  @override
+  AsyncValueWrapper<User> fromJson(Map<String, dynamic> json) {
+    return AsyncValueWrapper<User>.fromJson(
+      json,
+      (userJson) => User.fromJson(userJson as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson(AsyncValueWrapper<User> object) {
+    return object.toJson((user) => user.toJson());
+  }
+}
+```
+
+Then, annotate your state classes with `@UserAsyncValueConverter()`:
+
+#### With `json_serializable`:
+```dart
+@JsonSerializable()
+class MyState {
+  @UserAsyncValueConverter()
+  final AsyncValueWrapper<User> userState;
+
+  MyState(this.userState);
+
+  factory MyState.fromJson(Map<String, dynamic> json) => _$MyStateFromJson(json);
+  Map<String, dynamic> toJson() => _$MyStateToJson(this);
+}
+```
+
+#### With `freezed`:
+```dart
+@freezed
+abstract class MyState with _$MyState {
+  const factory MyState({
+    @UserAsyncValueConverter() required AsyncValueWrapper<User> userState,
+  }) = _MyState;
+
+  factory MyState.fromJson(Map<String, dynamic> json) => _$MyStateFromJson(json);
+```
+
+### State Persistence with `hydrated_bloc`
+
+If you want your cubit state to persist and restore automatically across app restarts, extend `HydratedAsyncValueCubit` instead of `AsyncValueCubit`.
+
+To configure it, simply implement the `tFromJson` and `tToJson` abstract members to specify how your generic value `T` should be serialized/deserialized:
+
+```dart
+class UserCubit extends HydratedAsyncValueCubit<User> {
+  UserCubit() : super();
+
+  @override
+  User Function(dynamic json) get tFromJson => 
+      (json) => User.fromJson(json as Map<String, dynamic>);
+
+  @override
+  dynamic Function(User user) get tToJson => 
+      (user) => user.toJson();
+
+  Future<void> fetchUser(String id) async {
+    emitGuarded(() => userRepository.getUser(id));
+  }
+}
+```
+
+This automatically persists and restores the entire `AsyncValueWrapper<User>` (its state status, current value, and any active error) behind the scenes.
+
 ## Available helpers
 
 - `AsyncValueCubit` with `AsyncValueWrapper` (`initial`, `loading`, `success`, `error`)
+- `HydratedAsyncValueCubit` with `AsyncValueWrapper` for automatic persistence
 - `ErrorValueCubit` with `ErrorValueWrapper` (`value`, `error`)
 
 ## Contributing
